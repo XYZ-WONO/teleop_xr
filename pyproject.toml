@@ -87,6 +87,7 @@ openarm = "teleop_xr.ik.robots.openarm:OpenArmRobot"
 so101 = "teleop_xr.ik.robots.so101:SO101Robot"
 teaarm = "teleop_xr.ik.robots.teaarm:TeaArmRobot"
 vega = "teleop_xr.ik.robots.vega:DexmateVegaRobot"
+deux = "teleop_xr.ik.robots.deux:DEUX"
 
 [dependency-groups]
 dev = [
