@@ -88,6 +88,8 @@ so101 = "teleop_xr.ik.robots.so101:SO101Robot"
 teaarm = "teleop_xr.ik.robots.teaarm:TeaArmRobot"
 vega = "teleop_xr.ik.robots.vega:DexmateVegaRobot"
 deux = "teleop_xr.ik.robots.deux:DEUX"
+deux_controller = "teleop_xr.ik.robots.deux:DEUX_controller"
+deux_tracking = "teleop_xr.ik.robots.deux:DEUX_tracking"
 
 [dependency-groups]
 dev = [
