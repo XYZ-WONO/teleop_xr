@@ -14,6 +14,7 @@ import jaxlie
 import pyroki as pk
 import yourdfpy
 
+from teleop_xr import ram
 from teleop_xr.ik.robot import BaseRobot, Cost
 
 
@@ -31,12 +32,19 @@ _SWERVE_JOINTS = [
     "rear_right_drive_joint",
     "front_right_drive_joint",
 ]
+_HAND_JOINTS = [
+    "left_hand_thumb_joint_1", "left_hand_thumb_joint_2", "left_hand_thumb_joint_3",
+    "left_hand_index_joint_1", "left_hand_index_joint_2",
+    "left_hand_third_joint_1", "left_hand_third_joint_2",
+    "right_hand_thumb_joint_1", "right_hand_thumb_joint_2", "right_hand_thumb_joint_3",
+    "right_hand_index_joint_1", "right_hand_index_joint_2",
+    "right_hand_third_joint_1", "right_hand_third_joint_2",
+]
 
 # DEUX description package root (relative to this file's repo location)
 _DEUX_DESCRIPTION_ROOT = (
-    Path(__file__).resolve().parents[5] / "deux_description"
+    Path(__file__).resolve().parents[4] / "deux_description"
 )
-_DEUX_URDF_PATH = _DEUX_DESCRIPTION_ROOT / "urdf" / "deux" / "deux.urdf"
 
 
 class DEUX(BaseRobot):
@@ -83,16 +91,24 @@ class DEUX(BaseRobot):
         self._arm_r_indices = [
             i for i, n in enumerate(joint_names) if n in _ARM_R_JOINTS
         ]
+        self._hand_indices = [
+            i for i, n in enumerate(joint_names) if n in _HAND_JOINTS
+        ]
 
     @override
     def _load_default_urdf(self) -> yourdfpy.URDF:
-        if not _DEUX_URDF_PATH.exists():
+        if not _DEUX_DESCRIPTION_ROOT.exists():
             raise FileNotFoundError(
-                f"DEUX URDF not found at {_DEUX_URDF_PATH}. "
+                f"deux_description not found at {_DEUX_DESCRIPTION_ROOT}. "
                 "Ensure deux_description is cloned next to teleop_xr."
             )
-        self.urdf_path = str(_DEUX_URDF_PATH)
-        self.mesh_path = str(_DEUX_DESCRIPTION_ROOT / "meshes")
+        urdf_path = ram.get_resource(
+            repo_root=_DEUX_DESCRIPTION_ROOT,
+            path_inside_repo="urdf/deux/deux.urdf",
+            resolve_packages=True,
+        )
+        self.urdf_path = str(urdf_path)
+        self.mesh_path = str(_DEUX_DESCRIPTION_ROOT)
         return yourdfpy.URDF.load(
             self.urdf_path,
             load_meshes=False,
@@ -181,6 +197,19 @@ class DEUX(BaseRobot):
                     JointVar(0),
                     rest_pose=jnp.zeros(n_joints),
                     weight=swerve_weights,
+                )
+            )
+
+        # Lock hand joints at 0 (controlled directly, not via IK)
+        if self._hand_indices:
+            hand_weights = jnp.zeros(n_joints)
+            for i in self._hand_indices:
+                hand_weights = hand_weights.at[i].set(10.0)
+            costs.append(
+                pk.costs.rest_cost(
+                    JointVar(0),
+                    rest_pose=jnp.zeros(n_joints),
+                    weight=hand_weights,
                 )
             )
 

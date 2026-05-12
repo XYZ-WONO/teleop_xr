@@ -37,19 +37,21 @@ def _get_ros_package_share_directory(package_name: str) -> Optional[str]:
 def _resolve_package(package_name: str) -> str:
     """Resolve a package name to a path within the current RAM repo."""
     if _CURRENT_REPO_ROOT:
-        # 1. Check root
+        # 1. Check root (must be a ROS package dir, i.e. contain package.xml)
         candidate = _CURRENT_REPO_ROOT / package_name
-        if candidate.exists():
+        if candidate.is_dir() and (candidate / "package.xml").exists():
             return candidate.as_posix()
 
         # 2. Check immediate subdirectories (common for metapackages)
+        #    Only match directories that contain a package.xml to avoid
+        #    mistaking Python module dirs (e.g. PkgName/__init__.py) for packages.
         for child in _CURRENT_REPO_ROOT.iterdir():
             if child.is_dir():
-                if child.name == package_name:  # pragma: no cover
+                if child.name == package_name and (child / "package.xml").exists():  # pragma: no cover
                     return child.as_posix()
                 # Check one level deeper
                 candidate = child / package_name
-                if candidate.exists():
+                if candidate.is_dir() and (candidate / "package.xml").exists():
                     return candidate.as_posix()
 
         # 3. Check if repo root itself IS the package
