@@ -182,8 +182,14 @@ class DEUXIKController(IKController):
         self._prev_x_pressed = x_pressed
         x_hold = self._hold_duration("x", x_pressed, now)
 
-        # falling edge 시 long-press 플래그 초기화
+        # falling edge 시 처리
         if x_falling_edge:
+            if not self._long_press_fired and self.active:
+                # short-press: IK 비활성화 (bridge가 홈 trajectory 담당)
+                self.active = False
+                if self.filter is not None:
+                    self.filter.reset()
+                logger.info("[DEUXIKController] X버튼 short-press → IK 비활성화 (bridge 홈이동 대기)")
             self._long_press_fired = False
 
         # long-press (3초 이상, 누르는 중): IK 토글 — 한 번만 발동
