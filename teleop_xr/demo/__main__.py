@@ -787,7 +787,8 @@ def main():
                         "Reset ignored: Not in IK mode or components not initialized"
                     )
 
-        processor.on_double_press(button=XRButton.SQUEEZE, callback=on_reset_pose)
+        if getattr(robot, 'use_grip_reset', True):
+            processor.on_double_press(button=XRButton.SQUEEZE, callback=on_reset_pose)
 
     # --- IK Worker Setup ---
     if cli.mode == "ik" and controller and robot:

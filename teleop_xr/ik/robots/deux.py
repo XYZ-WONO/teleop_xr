@@ -45,10 +45,13 @@ _HAND_JOINTS = frozenset({
 
 class DEUX(BaseRobot):
     """DEUX bimanual mobile robot IK base class.
+    use_grip_reset = False: demo의 SQUEEZE double-press → reset 비활성화
 
     mode="controller": lift excluded from IK — Meta Quest3 + controller.
     mode="tracking":   lift included in IK  — hand tracking.
     """
+
+    use_grip_reset: bool = False
 
     def __init__(
         self,
