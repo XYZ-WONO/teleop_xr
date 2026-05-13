@@ -37,7 +37,6 @@ authors = [{ name = "Qrafty AI", email = "contact@qrafty-ai.com" }]
 dependencies = [
   "fastapi",
   "uvicorn[standard]",
-  "numpy",
   "transforms3d",
   "pytest",
   "requests",

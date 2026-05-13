@@ -71,12 +71,18 @@ try:
     from tf2_ros import TransformBroadcaster
     from builtin_interfaces.msg import Time, Duration
 
-    try:
-        from cv_bridge import CvBridge
+    _numpy_major = int(np.__version__.split(".")[0])
+    if _numpy_major < 2:
+        try:
+            from cv_bridge import CvBridge
 
-        HAS_CV_BRIDGE = True
-    except ImportError:
+            HAS_CV_BRIDGE = True
+        except Exception:
+            HAS_CV_BRIDGE = False
+            CvBridge = None
+    else:
         HAS_CV_BRIDGE = False
+        CvBridge = None
 except ImportError as exc:
     ROS_AVAILABLE = False
     ROS_IMPORT_ERROR = ImportError(
