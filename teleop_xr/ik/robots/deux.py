@@ -22,7 +22,6 @@ from teleop_xr.ik.robot import BaseRobot, Cost
 _DEUX_DESCRIPTION_ROOT = (
     Path(__file__).resolve().parents[4] / "deux_description"
 )
-_DEUX_URDF_PATH = "urdf/deux/deux.urdf"
 
 _SWERVE_JOINTS = frozenset({
     "front_left_steer_joint",
@@ -89,7 +88,7 @@ class DEUX(BaseRobot):
             )
         urdf_path = ram.get_resource(
             repo_root=_DEUX_DESCRIPTION_ROOT,
-            path_inside_repo=_DEUX_URDF_PATH,
+            path_inside_repo="urdf/deux/deux.urdf.xacro",
             resolve_packages=True,
         )
         self.urdf_path = str(urdf_path)
