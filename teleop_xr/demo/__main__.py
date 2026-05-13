@@ -718,7 +718,7 @@ def main():
         logger.info(f"Initializing {robot_cls.__name__} with args: {robot_args}")
         robot = robot_cls(**robot_args)
         solver = PyrokiSolver(robot)
-        controller = IKController(robot, solver)
+        controller = robot.make_controller(solver) if hasattr(robot, 'make_controller') else IKController(robot, solver)
         state_container["q"] = np.array(robot.get_default_config())
         robot_vis = robot.get_vis_config()
 

@@ -256,6 +256,11 @@ class DEUX(BaseRobot):
         return costs
 
 
+    def make_controller(self, solver: Any) -> Any:
+        from teleop_xr.ik.robots.deux_controller import DEUXIKController
+        return DEUXIKController(self, solver)
+
+
 class DEUX_controller(DEUX):
     """Meta Quest3 + controller mode. Lift excluded from IK."""
 
