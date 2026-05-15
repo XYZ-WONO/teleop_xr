@@ -133,8 +133,8 @@ class DEUX(BaseRobot):
     @override
     def get_default_config(self) -> jax.Array:
         defaults = {
-            "arm_l_joint4": 1.57,
-            "arm_r_joint4": 1.57,
+            "arm_l_joint4": 1.4,
+            "arm_r_joint4": 1.4,
         }
         return jnp.array(
             [defaults.get(n, 0.0) for n in self.actuated_joint_names]
